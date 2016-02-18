@@ -1,0 +1,42 @@
+<step-wizard wizardtitle="Move In" wizardname="MoveInsWizard" onclose="onclose" show-progress="true">
+    
+    <step-wizard-status>
+        <step-wizard-status-item step="1" title="Select Units"></step-wizard-status-item>
+        <step-wizard-status-item step="2" title="Payment"></step-wizard-status-item>
+        <step-wizard-status-item step="3" title="Summary"></step-wizard-status-item>
+    </step-wizard-status>
+
+    <step-wizard-content>
+        <step-wizard-content-item step="1" after="ProccessSelectedUnits" validator="checkIfAnyUnitSelected" before="getVacantUnits">
+             <bubble-message ng-if="Error.ServerError===true">There is an error in our system . Please try later.</bubble-message>
+             <bubble-message ng-if="Error.NoUnitSelected===true">Please select unit(s) from the list</bubble-message>
+            <h5 class="text text-warning" style="margin-bottom:20px">You can change a selected unit price by clicking on the price.</h5>
+             <div ui-grid="vacantUnitsGridOptions" ui-grid-selection ui-grid-edit></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>
+                        <span class="text text-info"><strong>Total Price: </strong></span>
+                        <span class="text text-info"><strong>{{getTotalPrice()}}</strong></span>
+                    </h4>
+                </div>
+
+            </div>
+        </step-wizard-content-item>
+        <step-wizard-content-item step="2" action="finishprocess">
+            <b>Step 3</b>
+        </step-wizard-content-item>
+        <step-wizard-content-item step="3" action="close" after="onclose">
+            <b>Step 3</b>
+        </step-wizard-content-item>
+    </step-wizard-content>
+    <step-wizard-wait>
+        <div id="overlay" style="height: 100%;width:100%;position:absolute">
+            <h3>Please Wait...</h3>
+            <img src="/application/Images/loading.gif" />
+        </div>
+    </step-wizard-wait>
+
+        
+</step-wizard>
+
+       

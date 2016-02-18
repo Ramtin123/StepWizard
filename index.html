@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html ng-app="multimoveinapp">
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <link href="vendors/styles/bootstrap.min.css" rel="stylesheet" />
+    
+    <!--TODO: to use gulp to move bower dependencies to the vendor folder -->
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui-grid.min.css">  
+    
+    <link href="vendors/styles/processsteps.css" rel="stylesheet" />
+    <link href="application/styles/Style.css" rel="stylesheet" />
+
+    <script src="vendors/scripts/jquery-1.9.1.min.js"></script>
+    <script src="vendors/scripts/angular.min.js"></script>
+    <script src="vendors/scripts/bootstrap.min.js"></script>
+    <script src="vendors/scripts/ui-bootstrap.min.js"></script>
+    <script src="vendors/scripts/ui-bootstrap-tpls.min.js"></script>
+    
+    <!--TODO: to use gulp to move bower dependencies to the vendor folder -->
+    <script src="bower_components/angular-ui-grid/ui-grid.min.js"></script>
+    <script src="bower_components/lodash/lodash.js"></script>
+
+    <script src="application/scripts/common/app.js"></script>
+    <script src="application/scripts/common/eventEmitter.js"></script>
+
+    <script src="application/scripts/common/wizard/app.js"></script>
+    <script src="application/scripts/common/wizard/wizardService.js"></script>
+    <script src="application/scripts/common/wizard/wizardDirectives.js"></script>
+
+    <script src="application/scripts/app.js"></script>
+     <script src="application/scripts/services.js"></script>
+    <script src="application/scripts/controllers.js"></script>
+    <script src="application/scripts/directives.js"></script>
+</head>
+<body>
+    <div class="contaner" ng-cloak style="margin:50px" ng-controller="maincontroller as main">
+            <div ng-if="formState===formStates.TenantDetails" class="panel panel-default">
+                <div class="panel-heading">
+                    <panel-header title='Tenant Details' buttontype='close' onclose="closeTenantDetails" />
+                </div>    
+                <div class="panel-body panelformbody">
+                    <div class="row">
+                        <div style="position:relative">
+                            <div class="panel panel-primary" style="position:absolute;top:5px;left:30px;width:50%">
+                                <div class="panel-body panelinfo">
+                                    <div class="row">
+                                        <div class="col-md-2"><strong>Tenant Id: </strong></div>
+                                        <div class="col-md-10">{{Tenant.TenantID}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2"><strong>Fist Name: </strong></div>
+                                        <div class="col-md-10">{{Tenant.Firstname}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2"><strong>Last Name: </strong></div>
+                                        <div class="col-md-10">{{Tenant.Lastname}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2"><strong>Address1: </strong></div>
+                                        <div class="col-md-10">{{Tenant.Address1}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2"><strong>Address2: </strong></div>
+                                        <div class="col-md-10">{{Tenant.Address2}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2"><strong>City: </strong></div>
+                                        <div class="col-md-10">{{Tenant.City}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2"><strong>State: </strong></div>
+                                        <div class="col-md-10">{{Tenant.State}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2"><strong>Postcode: </strong></div>
+                                        <div class="col-md-10">{{Tenant.Postcode}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2"><strong>Email: </strong></div>
+                                        <div class="col-md-10">{{Tenant.Email}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2"><strong>Phone: </strong></div>
+                                        <div class="col-md-10">{{Tenant.Phone}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2"><strong>Company: </strong></div>
+                                        <div class="col-md-10">{{Tenant.Company}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panelformbuttons">
+                        <button ng-click="ShowMoveInWizard()" class="btn btn-success formbutton">Move-In</button>
+                        <button class="btn btn-danger formbutton formbuttonafter">Move-Out</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div ng-if="formState===formStates.MoveinWizard">
+                 <movein-wizard tenant="Tenant" onclose="CloseMoveInWizard"/>
+            </div>
+
+           <create-user ng-if="formState===formStates.CreateTenant" onclose="closeTenantsList"></create-user>
+            
+            <div ng-if="formState===formStates.Tenantlist || formState===formStates.Search" class="panel panel-default">
+                <div class="panel-heading">
+                    <panel-header title='Select Tenant' buttontype='{{buttontype}}' onclose="closeTenantsList" />
+                </div>
+                <div class="panel-body panelformbody" ng-if="formState===formStates.Search">
+                    <uib-tabset>
+                        <uib-tab heading="Search Tenant">
+                            <form novalidate name="form" ng-submit="search()">
+                                <div>
+                                    <div class="row form-inline col-sm-12">
+                                        <input class="form-control" name="firstname" ng-model="searchParameters.firstname" type="text" placeholder="first name" autocomplete="off">
+                                        <input class="form-control" name="lastname" ng-model="searchParameters.lastname" type="text" placeholder="last name" autocomplete="off">
+                                        <input class="form-control" name="company" ng-model="searchParameters.company" type="text" placeholder="company" autocomplete="off">
+                                        <input class="form-control" name="address1" ng-model="searchParameters.address1" type="text" placeholder="address line 1" autocomplete="off">
+                                        <input class="form-control" name="address2" ng-model="searchParameters.address2" type="text" placeholder="address line 2" autocomplete="off">
+                                        <input class="form-control" name="city" ng-model="searchParameters.city" type="text" placeholder="city" autocomplete="off">
+                                        <input class="form-control" name="state" ng-model="searchParameters.state" type="text" placeholder="state" autocomplete="off">
+                                        <input class="form-control" name="postcode" ng-model="searchParameters.postcode" type="text" placeholder="post code" autocomplete="off">
+                                        <input class="form-control" name="email" ng-model="searchParameters.email" type="email" placeholder="email address" autocomplete="off">
+                                        <input class="form-control" name="phone" ng-model="searchParameters.phone" type="text" placeholder="phone number" autocomplete="off">
+                                    </div>
+                                </div>
+                                <bubble-message ng-if="Error.Searching===true" >{{Error.Message}}</bubble-message>
+                                <div class="panelformbuttons">
+                                    <button type="submit" ng-if="!Loading.Search" class="btn btn-primary formbutton" >Search</button>
+                                    <span ng-if="Loading.Search===true" class="btn btn-primary disabled" >Searching...<img height="25" width="25" src="application/Images/Buttonloading.gif" /></span>
+                                    <span ng-click="clear()" class="btn btn-danger formbutton formbuttonafter">Clear</span>
+                                    <!--<button ng-click="CreateTenant()" class="btn btn-success formbuttonafterbig">Create New Tenant</button>-->
+                                </div>
+                            </form>
+                        </uib-tab>
+                        <uib-tab heading="Reservations" select="LoadReservations()">
+                            <div ng-if="Loading.Reservations===true" id="overlay" style="height: 50%;align-content: center">
+                                <h3>Loading...</h3>
+                                <img src="/application/Images/loading.gif" />
+                            </div>
+                            <bubble-message ng-if="Error.ReservationNotSelected===true" >{{Error.Message}}</bubble-message>
+                            <div ng-if="Loading.Reservations===false">
+                                <div>
+                                    <div ui-grid="reservationsGridOptions" ui-grid-selection></div>
+                                </div>
+                                <div class="panelformbuttons">
+                                    <button class="btn btn-success formbutton" ng-click="ApplyReservation()">Apply</button>
+                                </div>
+                            </div>
+                        </uib-tab>
+                    </uib-tabset>             
+                </div>
+               
+                <div class="panel-body panelformbody" ng-if="formState===formStates.Tenantlist">
+                    <div>
+                        <b class="text-info">{{tenantSearchGridOptions.data.length}} tenant(s) has been found</b>
+                         <div  ui-grid="tenantSearchGridOptions" ui-grid-selection></div>
+                    </div>
+                    <bubble-message ng-if="Error.TenantNotSelected===true" >{{Error.Message}}</bubble-message>
+                    <div class="panelformbuttons">
+                        <button class="btn btn-success formbutton" ng-click="ApplyTenant()">Apply</button>
+                    </div>
+                </div>
+        
+            <div>
+
+        </div>
+    </div>
+    </div>
+</body>
+</html>

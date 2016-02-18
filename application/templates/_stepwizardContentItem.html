@@ -1,0 +1,13 @@
+﻿<div class="panel panel-default">
+    <div class="panel-heading">
+        <panel-header title='{{$parent.$parent.$parent.wizardtitle}}' buttontype='close' onclose="$parent.$parent.$parent.onclose" /> 
+    </div>
+    
+    <div class="panel-body panelformbody">
+        <div class="panelformdetails" ng-transclude></div>
+        <div class="panelformbuttons">
+            <button class="btn btn-primary formbutton" ng-click="Next()">{{(action==='finishprocess'?'Finish':(action==='close'?'Close':'Next'))}}</button>
+        </div>
+
+    </div>
+</div>
