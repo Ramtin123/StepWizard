@@ -111,7 +111,10 @@
                         }
                     }
 
-                    wizard.On('wizardInitiated wizardStepChanged wizardWaitingFinished wizardWaitingReturnedError', UpdateStatus);
+                    wizard.On('wizardInitiated', UpdateStatus);
+                    wizard.On('wizardStepChanged', UpdateStatus);
+                    wizard.On('wizardWaitingFinished', UpdateStatus);
+                    wizard.On('wizardWaitingReturnedError',UpdateStatus);
                     wizard.On('wizardCompleted', function () {
                         scope.selectable = false;
                         scope.disabled = false;
@@ -134,7 +137,6 @@
                     step: '@',
                     before:'=',
                     onnext: '=',
-                    after:'=',
                     validator: '=',
                     isdependency: '@',
                     action: '@'  //it can be finishprocess or close
@@ -148,56 +150,60 @@
                         validator: scope.validator,
                         isDependency: Boolean(scope.isdependency)
                     });
-                    
-                    function ProcessEvent(event, cb) {
-                        var currentStatus = wizard.GetStepStatus(scope.step);
-                        if (!cb || typeof cb !== 'function' || !currentStatus.current) return;
-                        if (event && typeof event === 'function') var result = event();
-                        if(result){  //Does not work . fix it later
-                            cb.bind(result);
-                            }
-                        if(wizard.Paused===true || wizard.Waiting===true){
-                            wizard.PushToWaitingStack(cb);
-                            return ;
-                        }
-                        cb(result);
-                    }
-                    
                     scope.Next = function () {
-                        ProcessEvent(scope.validator, function (result) {
-                            if (result !== false) {
-                                ProcessEvent(scope.onnext, function () {
-                                    ProcessEvent(scope.after, function () {
-                                        if (scope.action === 'finishprocess') {
-                                            wizard.FinishProcess();
-                                        }
-                                        else if (scope.action === 'close') {
-                                            wizard.Close();
-                                        }
-                                        else {
-                                            wizard.NextStep();
-                                        }
-                                    });
-                                });
+                        function ContinueToNext(){
+                            if (scope.action === 'finishprocess') {
+                                wizard.FinishProcess();
                             }
-                        });
-                    }
-                        
+                            else if (scope.action === 'close') {
+                                wizard.Close();
+                            }
+                            else {
+                                wizard.NextStep();
+                            }
+                        }
+                        if (!scope.validator || typeof scope.validator!=='function' || scope.validator() !== false) { //check validation . it should return false if we are not allowed to go to the next step
+                            if (scope.onnext && typeof scope.onnext==='function') scope.onnext();
+                            if(wizard.Waiting){
+                                wizard.PushToWaitingStack(ContinueToNext);
+                                return ;
+                            }
+                            ContinueToNext();
+                        }
+                    };
+
                     function LoadStep() {
-                        var currentStatus = wizard.GetStepStatus(scope.step);
-                        ProcessEvent(scope.before, function () {
+                        function UpdateStatus(){
                             if (currentStatus.current) {
                                 element.css('display', 'block');
                             }
                             else {
                                 element.css('display', 'none');
                             }
-                        });
+                        }
+                        var currentStatus = wizard.GetStepStatus(scope.step);
+                        if (scope.before && typeof scope.before === 'function' && currentStatus.current && (currentStatus.Loaded === false || (currentStatus.Met === true && currentStatus.HasDependency===true))) {
+                            wizard.GetStep(scope.step).Loaded=true;
+                            scope.before();
+                        } 
+                        if(wizard.Waiting){
+                            wizard.PushToWaitingStack(UpdateStatus);
+                            return ;
+                        }
+                        UpdateStatus();
                     }
 
-                    wizard.On('wizardInitiated wizardStepChanged wizardWaitingReturnedError', LoadStep);
+                    wizard.On('wizardInitiated', LoadStep);
+                    wizard.On('wizardStepChanged', LoadStep);
                     wizard.On('wizardClosed', function () {
                         scope.$parent.$parent.$parent.onclose();  //TODO: To fix it 
+                    });
+                    wizard.On('wizardWaitingFinished', function(){
+                        wizard.DrainWaitingStack();
+                    });
+                    wizard.On('wizardWaitingReturnedError',function(){
+                        wizard.DrainWaitingStack(false);
+                        LoadStep();
                     });
                     wizard.On('wizardWaiting',function(){
                           element.css('display', 'none');

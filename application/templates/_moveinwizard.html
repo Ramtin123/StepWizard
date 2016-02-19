@@ -7,7 +7,7 @@
     </step-wizard-status>
 
     <step-wizard-content>
-        <step-wizard-content-item step="1" after="ProccessSelectedUnits" validator="checkIfAnyUnitSelected" before="getVacantUnits">
+        <step-wizard-content-item step="1" onnext="ProccessSelectedUnits" validator="checkIfAnyUnitSelected" before="getVacantUnits">
              <bubble-message ng-if="Error.ServerError===true">There is an error in our system . Please try later.</bubble-message>
              <bubble-message ng-if="Error.NoUnitSelected===true">Please select unit(s) from the list</bubble-message>
             <h5 class="text text-warning" style="margin-bottom:20px">You can change a selected unit price by clicking on the price.</h5>
@@ -22,11 +22,19 @@
 
             </div>
         </step-wizard-content-item>
-        <step-wizard-content-item step="2" action="finishprocess">
-            <b>Step 3</b>
+        <step-wizard-content-item step="2" action="finishprocess" validator="creditCardValidator" onnext="ProccessMoveinConfirm">
+            <div ng-if="selectedUnitsGridOptions.data.length>0" ui-grid="selectedUnitsGridOptions"></div>
+            <div style="position:relative">
+                <bubble-message style="top: 50px;left: 500px;" ng-if="Error.creditCardInfoInvalid===true">Please enter credit card information correctly</bubble-message>
+                <credit-card info="creditCard" onchange="creditcardChanged"></credit-card>
+            </div>
+            <bubble-message ng-if="Error.creditCardRejected===true">{{Error.Message}}</bubble-message>
         </step-wizard-content-item>
-        <step-wizard-content-item step="3" action="close" after="onclose">
-            <b>Step 3</b>
+        <step-wizard-content-item step="3" action="close" onnext="onclose">
+            <div style="position:relative">
+                <bubble-message style="top:-50px" messagetype="success">These units are added successfuly for <strong>{{tenant.Firstname+' '+tenant.Lastname}}</strong></bubble-message>
+                <div ng-if="ShowSummaryList===true" ui-grid="selectedUnitsGridOptions"></div>
+            </div>
         </step-wizard-content-item>
     </step-wizard-content>
     <step-wizard-wait>

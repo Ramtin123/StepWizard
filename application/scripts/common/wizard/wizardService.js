@@ -2,7 +2,6 @@
     module.factory('wizardManager', ['eventEmitter', function (eventEmitter) {
         function wizardManager(name) {
             eventEmitter.call(this);
-            var self = this;
             this.eventTypes = {
                 wizardRegistered: 'wizardRegistered',
                 wizardInitiated: 'wizardInitiated',
@@ -11,46 +10,14 @@
                 wizardWaiting:'wizardWaiting',
                 wizardWaitingReturnedError:'wizardWaitingReturnedError',
                 wizardWaitingFinished:'wizardWaitingFinished',
-                wizardPaused:'wizardPaused',
-                wizardUnPaused:'wizardUnPaused',
                 wizardClosed: 'wizardClosed',
                 wizardTearedDown: 'wizardTearedDown'
             };
             this.name = name;
             this.Steps = [];
-            this.WaitingStack = [];
             this.FinalStep = 1;
-            this.On('wizardPaused',function(){
-                this.Paused=true;
-            });
-            this.On('wizardUnPaused',function(){
-                this.Paused=false;
-            });
-            this.On('wizardWaiting',function(){
-                this.Waiting=true;
-            });
-            this.On('wizardWaitingFinished wizardWaitingReturnedError',function(){
-                this.Waiting=false;
-            });
-            this.On('wizardWaitingFinished wizardUnPaused', function(){
-                _drainWaitingStack();
-            });
-            this.On('wizardWaitingReturnedError',function(){
-                _drainWaitingStack(false);
-            });
-            
-            this.Emit(this.eventTypes.wizardRegistered, name);
-
-            function _drainWaitingStack(execute) {
-                while (self.WaitingStack.length > 0) {
-                    var cb = self.WaitingStack.pop();
-                    if (execute !== false) cb();
-                }
-            }
+            this.Emit(this.eventTypes.wizardRegistered,name);
         }
-
-        
-
         wizardManager.prototype = Object.create(eventEmitter.prototype);
         
         wizardManager.prototype.Init = function () {
@@ -58,7 +25,6 @@
             this.LastStep = 1;
             this.ProcessFinished = false;
             this.Waiting=false;
-            this.Paused=false;
             this.WaitingStack=[];
             this.Emit(this.eventTypes.wizardInitiated, this.name);
         }
@@ -71,9 +37,7 @@
         }
 
         wizardManager.prototype.GetStep = function (stepnumber) {
-            return _.find(this.Steps, function (stepItem) {
-                return stepItem == stepnumber;
-            });
+           return  _.find(this.Steps, { 'step': stepnumber });
         }
 
         wizardManager.prototype.GetStepStatus = function (step) {
@@ -82,7 +46,8 @@
                 Passed:(step<this.currentStep?true:false),
                 current: (step == this.currentStep ? true : false),
                 ProcessFinished: this.ProcessFinished,
-                Met: (step <= this.LastStep ? true : false),
+                Met: (step < this.LastStep ? true : false),
+                Loaded: !!(this.GetStep(step).Loaded),
                 HasDependency: _.filter(this.Steps, function (stepitem) {
                     return stepitem.step < step && stepitem.step > self.currentStep ;
                 }).some(function (sItem) {
@@ -115,33 +80,31 @@
         }
         
          wizardManager.prototype.ShowWaiting = function () {
+             this.Waiting=true;
              this.Emit(this.eventTypes.wizardWaiting);
          }
          
           wizardManager.prototype.HideWaiting = function () {
+             this.Waiting=false;
              this.Emit(this.eventTypes.wizardWaitingFinished);
          }
          
          wizardManager.prototype.WaitingEndsWithError = function (cb) {
+             this.Waiting=false;
              if(cb && typeof cb==='function') cb();
              this.Emit(this.eventTypes.wizardWaitingReturnedError);
-         }
-         
-         wizardManager.prototype.Pause = function () {
-             if(this.Paused===true) return;
-             this.Emit(this.eventTypes.wizardPaused);
-         }
-         
-         wizardManager.prototype.UnPause = function () {
-             if(this.Paused===false) return;
-             this.Emit(this.eventTypes.wizardUnPaused);
          }
          
          wizardManager.prototype.PushToWaitingStack=function(cb){
              this.WaitingStack.push(cb);
          }
          
-        //wizardManager.prototype.DrainWaitingStack = _drainWaitingStack;
+         wizardManager.prototype.DrainWaitingStack=function(execute){
+             while(this.WaitingStack.length>0){
+                 var cb=this.WaitingStack.pop();
+                 if(execute!==false) cb();
+             }
+         }
 
         wizardManager.prototype.Close = function () {
             this.TearDown();
