@@ -10,8 +10,11 @@
         <step-wizard-content-item step="1" onnext="ProccessSelectedUnits" validator="checkIfAnyUnitSelected" before="getVacantUnits">
              <bubble-message ng-if="Error.ServerError===true">There is an error in our system . Please try later.</bubble-message>
              <bubble-message ng-if="Error.NoUnitSelected===true">Please select unit(s) from the list</bubble-message>
-            <h5 class="text text-warning" style="margin-bottom:20px">You can change a selected unit price by clicking on the price.</h5>
-             <div ui-grid="vacantUnitsGridOptions" ui-grid-selection ui-grid-edit></div>
+            <h5 class="text text-warning" style="margin-bottom:2%">You can change a selected unit price by clicking on the price.</h5>
+            <div  style="height:70%">
+                <div ui-grid="vacantUnitsGridOptions" ui-grid-selection ui-grid-edit></div>
+            </div>
+             
             <div class="row">
                 <div class="col-md-12">
                     <h4>
@@ -23,8 +26,10 @@
             </div>
         </step-wizard-content-item>
         <step-wizard-content-item step="2" action="finishprocess" validator="creditCardValidator" onnext="ProccessMoveinConfirm">
-            <div ng-if="selectedUnitsGridOptions.data.length>0" ui-grid="selectedUnitsGridOptions"></div>
-            <div style="position:relative">
+            <div style="height:50%">
+                 <div  ng-if="selectedUnitsGridOptions.data.length>0" ui-grid="selectedUnitsGridOptions"></div>
+            </div>
+            <div style="position:relative;height:50%;">
                 <bubble-message style="top: 50px;left: 500px;" ng-if="Error.creditCardInfoInvalid===true">Please enter credit card information correctly</bubble-message>
                 <credit-card info="creditCard" onchange="creditcardChanged"></credit-card>
             </div>
@@ -33,16 +38,19 @@
         <step-wizard-content-item step="3" action="close" onnext="onclose">
             <div style="position:relative">
                 <bubble-message style="top:-50px" messagetype="success">These units are added successfuly for <strong>{{tenant.Firstname+' '+tenant.Lastname}}</strong></bubble-message>
-                <div ng-if="ShowSummaryList===true" ui-grid="selectedUnitsGridOptions"></div>
+                <div  style="height:80%">
+                    <div ng-if="ShowSummaryList===true" ui-grid="selectedUnitsGridOptions"></div>
+                </div>
             </div>
         </step-wizard-content-item>
+        <step-wizard-wait>
+            <div id="overlay" style="position:absolute">
+                <h3>Please Wait...</h3>
+                <img src="assets/application/Images/Loading.gif" />
+            </div>
+        </step-wizard-wait>
     </step-wizard-content>
-    <step-wizard-wait>
-        <div id="overlay" style="height: 100%;width:100%;position:absolute">
-            <h3>Please Wait...</h3>
-            <img src="/application/Images/loading.gif" />
-        </div>
-    </step-wizard-wait>
+   
 
         
 </step-wizard>

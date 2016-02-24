@@ -7,27 +7,32 @@
 
     <step-wizard-content>
         <step-wizard-content-item step="1" action="finishprocess" onnext="ConfirmMoveOut" validator="checkValidation" before="getLedgers">
-            <bubble-message ng-if="Error.ServerError===true">There is an error in our system . Please try later.</bubble-message>
+            <bubble-message ng-if="Error.NoLedger===true || Error.ServerError===true">{{Error.Message}}</bubble-message>
             <bubble-message ng-if="Error.NoUnitSelected===true">Please select unit(s) from the list</bubble-message>
-            <div ng-if="ledgersGridOptions.data.length>0" ui-grid="ledgersGridOptions" ui-grid-selection></div>
+            <div style="height:70%">
+                 <div ng-if="ledgersGridOptions.data.length>0"  ui-grid="ledgersGridOptions" ui-grid-selection></div>
+            </div>
             <div style="margin-top:50px;position:relative">
-                <label class="checkbox-inline text-info"><input type="checkbox" ng-model="Status.Confirmed">I confirm that I want to Moveout selected unit(s) for <strong>{{tenant.Firstname+ ' '+tenant.Lastname}}</strong></label>
+                <label ng-if="!Error.NoLedger && !Error.ServerError" class="checkbox-inline text-info"><input type="checkbox" ng-model="Status.Confirmed">I confirm that I want to Moveout selected unit(s) for <strong>{{tenant.Firstname+ ' '+tenant.Lastname}}</strong></label>
                 <bubble-message style="top:0px" ng-if="Error.NotConfirmed===true">Please Confirm that you want to move out selected unit(s)</bubble-message>
             </div>
         </step-wizard-content-item>
         <step-wizard-content-item step="2" action="close" onnext="onclose">
             <div style="position:relative">
                 <bubble-message style="position:absolute" messagetype="success">Moved out these unit(s) successfuly for <strong>{{tenant.Firstname+' '+tenant.Lastname}}</strong></bubble-message>
-                <div ng-if="ShowSummaryList===true" ui-grid="ledgersGridOptions"></div>
+                <div style="height:80%" >
+                    <div ng-if="ShowSummaryList===true" ui-grid="ledgersGridOptions"></div>
+                </div>
             </div>
         </step-wizard-content-item>
+        <step-wizard-wait>
+            <div id="overlay" style="height: 100%;width:100%;position:absolute">
+                <h3>Please Wait...</h3>
+                <img src="assets/application/Images/Loading.gif" />
+            </div>
+        </step-wizard-wait>
     </step-wizard-content>
-    <step-wizard-wait>
-        <div id="overlay" style="height: 100%;width:100%;position:absolute">
-            <h3>Please Wait...</h3>
-            <img src="/application/Images/loading.gif" />
-        </div>
-    </step-wizard-wait>
+    
 
 
 </step-wizard>

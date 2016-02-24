@@ -1,0 +1,34 @@
+﻿<div class="panel panel-default" style="height:100%">
+    <div class="panel-heading">
+        <h4 class="text-info">Credit card</h4>
+    </div>
+    <div class="panel-body">
+        <div class="col-md-6 col-sm-12 form-inline" id="movein-payment-details" >
+            <form name="creditcard" novalidate>
+                <div>
+                    <select class="form-control" ng-required="true" name="cardtype" ng-model="info.cardtype" placeholder="card type">
+                        <option value="6">Visa</option>
+                        <option value="5">Mastercard</option>
+                        <option value="7">American Express</option>
+                    </select>
+                    <input class="form-control" ng-required="true" name="cardnumber" ng-model="info.cardnumber" type="number" placeholder="card number" autocomplete="off">
+                    <input class="form-control" ng-required="true" name="cardcvv" ng-model="info.cardcvv" type="number" placeholder="card cvv" autocomplete="off"><br />
+                    <div style="margin-top:2%">
+                        <label class="text-info">Expiry Date: </label><input type="number" min="1" max="12" class="form-control" ng-required="true" name="cardexpirymm" ng-model="info.cardexpirymm" placeholder="MM">/<input class="form-control" ng-required="true" name="cardexpiryyy" ng-model="info.cardexpiryyy" type="number" placeholder="YY" autocomplete="off">
+                    </div>
+                </div>
+                
+                    
+                
+                
+            </form>
+            
+        </div>
+        <div class="col-md-6 hidden-sm">
+            <img ng-if="info.cardtype==6" style="zoom: 60%" src="assets/application/Images/Visa-Credit-Card-Icon.jpg" />
+            <img ng-if="info.cardtype==5" style="zoom: 60%" src="assets/application/Images/Master-Credit-Card-Icon.jpg" />
+            <img ng-if="info.cardtype==7" style="zoom: 60%" src="assets/application/Images/Express-Credit-Card-Icon.jpg" />
+        </div>
+    </div>
+</div>
+

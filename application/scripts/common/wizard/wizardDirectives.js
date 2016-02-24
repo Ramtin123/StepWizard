@@ -10,7 +10,7 @@
                     onclose: '='
                 },
                 transclude: true,
-                templateUrl: '/application/templates/_stepwizard.html',
+                templateUrl: 'assets/application/templates/_stepwizard.html',
                 link:function(scope,element,attrs){
                     var wizard = wizardService.GetWizard(scope.wizardname); 
                     if (!wizard) return;
@@ -26,7 +26,7 @@
                restrict: 'EA',
                replace: true,
                transclude: true,
-               templateUrl: '/application/templates/_stepwizardStatus.html'
+               templateUrl: 'assets/application/templates/_stepwizardStatus.html'
            }
        }
     ]);
@@ -37,7 +37,7 @@
                restrict: 'EA',
                replace: true,
                transclude: true,
-               templateUrl: '/application/templates/_stepwizardContent.html'
+               templateUrl: 'assets/application/templates/_stepwizardContent.html'
            }
        }
     ]);
@@ -48,12 +48,12 @@
                restrict: 'EA',
                replace: true,
                transclude: true,
-               templateUrl:'/application/templates/_stepwizardWaiting.html',
+               templateUrl:'assets/application/templates/_stepwizardWaiting.html',
                link: function (scope, element, attrs) {
-                    var wizard = wizardService.GetWizard(scope.$parent.wizardname); //TODO : fix it
+                    var wizard = wizardService.GetWizard(scope.$parent.$parent.wizardname); //TODO : fix it
                     if (!wizard) return;
                     wizard.On('wizardInitiated', function(){
-                        if(!wizard.Waiting) element.css('display', 'none');
+                       if(!wizard.Waiting) element.css('display', 'none');
                     });
                     wizard.On('wizardWaitingFinished', function(){
                         element.css('display', 'none');
@@ -79,7 +79,7 @@
                   title:'@',
                   step:'@'
                 },
-                templateUrl: '/application/templates/_stepwizardStatusItem.html',
+                templateUrl: 'assets/application/templates/_stepwizardStatusItem.html',
                 link: function (scope, element, attrs) {
                     var wizard = wizardService.GetWizard(scope.$parent.$parent.$parent.wizardname); //TODO : fix it
                     if (!wizard) return;
@@ -141,7 +141,7 @@
                     isdependency: '@',
                     action: '@'  //it can be finishprocess or close
                 },
-                templateUrl: '/application/templates/_stepwizardContentItem.html',
+                templateUrl: 'assets/application/templates/_stepwizardContentItem.html',
                 link: function (scope, element, attrs) {
                     var wizard = wizardService.GetWizard(scope.$parent.$parent.$parent.wizardname);
                     if (!wizard) return;
