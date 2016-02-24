@@ -8,7 +8,7 @@
                   onclose:'=',
                   buttontype:'@'  
                 },
-                templateUrl: '/application/templates/_panelHeader.html',
+                templateUrl: 'assets/application/templates/_panelHeader.html',
                 controller: function($scope){
                     
                 }
@@ -29,7 +29,7 @@
                 },
                 transclude:true,
                 replace: true,
-                templateUrl: '/application/templates/_bubbleMessage.html'
+                templateUrl: 'assets/application/templates/_bubbleMessage.html'
             }
         }
     ]);
@@ -41,21 +41,33 @@
                   tenant:'=',  
                   onclose:'='
                 },
-                templateUrl: '/application/templates/_moveinwizard.html',
+                templateUrl: 'assets/application/templates/_moveinwizard.html',
                 controller: 'moveinWizardController',
             }
         }
+    ]);
+
+    module.directive('moveoutWizard', [function () {
+        return {
+            restrict: 'EA',
+            scope: {
+                tenant: '=',
+                onclose: '='
+            },
+            templateUrl: 'assets/application/templates/_moveoutwizard.html',
+            controller: 'moveoutWizardController',
+        }
+    }
     ]);
 
     module.directive('createUser', [
         function () {
             return {
                 restrict: 'EA',
-                replace:true,
                 scope: {
                     onclose: '='
                 },
-                templateUrl: '/application/templates/_createNewTenant.html',
+                templateUrl: 'assets/application/templates/_createNewTenant.html',
                 controller: function ($scope) {
 
                 }
