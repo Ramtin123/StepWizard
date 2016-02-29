@@ -216,7 +216,6 @@
                             wizard.On('wizardInitiated', LoadStep);
                             wizard.On('wizardStepChanged', LoadStep);
                             wizard.On('wizardClosed', function () {
-                                scope.FormStatus.Waiting=false;
                                 scope.onclose();  
                             });
                             wizard.On('wizardWaitingFinished', function () {
@@ -224,6 +223,7 @@
                                 wizard.DrainWaitingStack();
                             });
                             wizard.On('wizardWaitingReturnedError', function () {
+                                 scope.FormStatus.Waiting=false;
                                 wizard.DrainWaitingStack(false);
                                 LoadStep();
                             });
