@@ -8,10 +8,7 @@
                   onclose:'=',
                   buttontype:'@'  
                 },
-                templateUrl: 'assets/application/templates/_panelHeader.html',
-                controller: function($scope){
-                    
-                }
+                templateUrl: 'public/application/templates/_panelHeader.html'
             }
         }
     ]);
@@ -29,7 +26,7 @@
                 },
                 transclude:true,
                 replace: true,
-                templateUrl: 'assets/application/templates/_bubbleMessage.html'
+                templateUrl: 'public/application/templates/_bubbleMessage.html'
             }
         }
     ]);
@@ -41,7 +38,7 @@
                   tenant:'=',  
                   onclose:'='
                 },
-                templateUrl: 'assets/application/templates/_moveinwizard.html',
+                templateUrl: 'public/application/templates/_moveinwizard.html',
                 controller: 'moveinWizardController',
             }
         }
@@ -54,7 +51,7 @@
                 tenant: '=',
                 onclose: '='
             },
-            templateUrl: 'assets/application/templates/_moveoutwizard.html',
+            templateUrl: 'public/application/templates/_moveoutwizard.html',
             controller: 'moveoutWizardController',
         }
     }
@@ -67,7 +64,7 @@
                 scope: {
                     onclose: '='
                 },
-                templateUrl: 'assets/application/templates/_createNewTenant.html',
+                templateUrl: 'public/application/templates/_createNewTenant.html',
                 controller: function ($scope) {
 
                 }

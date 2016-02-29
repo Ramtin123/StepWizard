@@ -79,9 +79,9 @@
             }
         }
         
-         wizardManager.prototype.ShowWaiting = function () {
+         wizardManager.prototype.ShowWaiting = function (showbackground) {
              this.Waiting=true;
-             this.Emit(this.eventTypes.wizardWaiting);
+             this.Emit(this.eventTypes.wizardWaiting, { ShowBackGround: showbackground || false });
          }
          
           wizardManager.prototype.HideWaiting = function () {

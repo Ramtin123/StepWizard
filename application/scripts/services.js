@@ -18,12 +18,14 @@
              var promises = [];
              var hasError = false;
              Units.forEach(function (unit) {
+                 unit.status = 2;
                  var promise =fn(unit);
                  promises.push(promise);
                  promise.then(function (result) {
+                     unit.status = 1;
                      unit = _.merge(unit, result.data);
                  }, function (error) {
-                     unit.error = error.data;
+                     unit.status = error.data;
                  });
              });
              $q.all(promises).then(function () {

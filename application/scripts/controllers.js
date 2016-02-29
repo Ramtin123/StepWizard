@@ -1,4 +1,22 @@
 ﻿(function (module) {
+    var helpers = {
+        GetStatusText: function (grid, row) {
+            if (row.entity.status === 1) {
+                return 'Successfully Done';
+            }
+            else if (row.entity.status === 2) {
+                return '';
+            }
+            else if (row.entity.status) {
+                return row.entity.status;
+            }
+        },
+        GetStatusColumn:function(){
+            return { name: 'status', displayName: 'Status', cellTemplate: '<div ng-class="(row.entity.status===1?\'text-success\':(row.entity.status===2?\'fa fa-refresh fa-spin\':\'text-danger\'))"><strong>{{grid.appScope.cumulative(grid, row)}}</strong></div>'};
+        }
+    }
+    
+    
     module.controller('maincontroller', ['$scope', 'apiServices', function ($scope, apiServices) {
         var formStates = {
             Search: 'Search',
@@ -214,7 +232,7 @@
                 { name: 'AdministrativeFee', width: 200, type: 'number', aggregationType: uiGridConstants.aggregationTypes.sum }
             ]
         };
-
+        $scope.cumulative = helpers.GetStatusText;
         $scope.creditCard = {};
         var creditCardForm = {};
         $scope.creditcardChanged = function (form) {
@@ -276,7 +294,8 @@
             $scope.Error.creditCardInfoInvalid = false;
             $scope.Error.creditCardRejected = false;
             $scope.Error.Message = '';
-            wizard.ShowWaiting();
+            wizard.ShowWaiting(true);
+            $scope.selectedUnitsGridOptions.columnDefs.push(helpers.GetStatusColumn());
             apiServices.ProccessMoveinConfirm($scope.tenant.TenantID, moveInDate, $scope.creditCard, $scope.vacantUnitsApi.selection.getSelectedRows()).then(function (result) {
                 wizard.HideWaiting();
                 $scope.ShowSummaryList = true;
@@ -339,6 +358,8 @@
             ]
         };
 
+        $scope.cumulative = helpers.GetStatusText;
+
         $scope.ledgersGridOptions.onRegisterApi = function (gridApi) {
             $scope.ledgersApi = gridApi;
             if (gridApi.selection) {
@@ -375,7 +396,8 @@
 
         $scope.ConfirmMoveOut = function () {
             $scope.Error.Reset();
-            wizard.ShowWaiting();
+            wizard.ShowWaiting(true);
+            $scope.ledgersGridOptions.columnDefs.push(helpers.GetStatusColumn());
             apiServices.ProccessMoveoutConfirm($scope.tenant.TenantID, $scope.ledgersApi.selection.getSelectedRows()).then(function (result) {
                 wizard.HideWaiting();
                 $scope.ledgersGridOptions.data = $scope.ledgersApi.selection.getSelectedRows();

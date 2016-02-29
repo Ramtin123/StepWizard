@@ -7,7 +7,7 @@
                    info: '=',
                    onchange: '='
                },
-               templateUrl: 'assets/application/templates/_creditCard.html',
+               templateUrl: 'public/application/templates/_creditCard.html',
                link: function (scope, element, attrs) {
                    scope.$watch('info', function (newVal, oldVal) {
                        if (scope.onchange && typeof scope.onchange === 'function') scope.onchange(scope.creditcard);

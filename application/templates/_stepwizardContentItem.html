@@ -6,7 +6,8 @@
     <div class="panel-body panelformbody">
         <div class="panelformdetails" ng-transclude></div>
         <div class="panelformbuttons">
-            <button class="btn btn-primary formbutton" ng-click="Next()">{{(action==='finishprocess'?'Finish':(action==='close'?'Close':'Next'))}}</button>
+            <button class="btn btn-primary formbutton" ng-if="FormStatus.Waiting===false" ng-click="Next()">{{(action==='finishprocess'?'Finish':(action==='close'?'Close':'Next'))}}</button>
+            <button class="btn btn-primary formbutton" ng-disabled="true" ng-if="FormStatus.Waiting===true"><i class="fa fa-refresh fa-spin"></i> Waiting...</button>
         </div>
 
     </div>

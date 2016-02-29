@@ -5,7 +5,7 @@
                 restrict: 'EA',
                 replace: true,
                 transclude: true,
-                templateUrl: 'assets/application/templates/_stepwizard.html',
+                templateUrl: 'public/application/templates/_stepwizard.html',
                 compile: function compile(tElement, tAttrs, transclude) {
                     return {
                         pre: function (scope, iElement, iAttrs, controller) {
@@ -30,7 +30,7 @@
                 restrict: 'EA',
                 replace: true,
                 transclude: true,
-                templateUrl: 'assets/application/templates/_stepwizardStatus.html'
+                templateUrl: 'public/application/templates/_stepwizardStatus.html'
             }
         }
     ]);
@@ -41,7 +41,7 @@
                 restrict: 'EA',
                 replace: true,
                 transclude: true,
-                templateUrl: 'assets/application/templates/_stepwizardContent.html'
+                templateUrl: 'public/application/templates/_stepwizardContent.html'
             }
         }
     ]);
@@ -52,7 +52,7 @@
                 restrict: 'EA',
                 replace: true,
                 transclude: true,
-                templateUrl: 'assets/application/templates/_stepwizardWaiting.html',
+                templateUrl: 'public/application/templates/_stepwizardWaiting.html',
                 link: function (scope, element, attrs) {
                     var wizard = wizardService.GetWizard(scope.wizardname); //TODO : fix it
                     if (!wizard) return;
@@ -62,8 +62,13 @@
                     wizard.On('wizardWaitingFinished', function () {
                         element.css('display', 'none');
                     });
-                    wizard.On('wizardWaiting', function () {
-                        element.css('display', 'block');
+                    wizard.On('wizardWaiting', function (data) {
+                        if (data.ShowBackGround === false) {
+                            element.css('display', 'block');
+                        }
+                        else {
+                            element.css('display', 'none');
+                        }
                     });
                     wizard.On('wizardWaitingReturnedError', function () {
                         element.css('display', 'none');
@@ -80,7 +85,7 @@
                 replace: true,
                 scope: true,
                 transclude: true,
-                templateUrl: 'assets/application/templates/_stepwizardStatusItem.html',
+                templateUrl: 'public/application/templates/_stepwizardStatusItem.html',
                 compile: function compile(tElement, tAttrs, transclude) {
                     return {
                         pre: function (scope, element, attrs) {
@@ -143,7 +148,7 @@
                 replace: true,
                 transclude: true,
                 scope: true,
-                templateUrl: 'assets/application/templates/_stepwizardContentItem.html',
+                templateUrl: 'public/application/templates/_stepwizardContentItem.html',
                 compile: function compile(tElement, tAttrs, transclude) {
                     return {
                         pre: function (scope, element, attrs) {
@@ -162,6 +167,9 @@
                                 validator: scope.validator,
                                 isDependency: Boolean(scope.isdependency)
                             });
+                            scope.FormStatus = {
+                                Waiting: wizard.Waiting || false
+                            };
                             scope.Next = function () {
                                 function ContinueToNext() {
                                     if (scope.action === 'finishprocess') {
@@ -208,16 +216,23 @@
                             wizard.On('wizardInitiated', LoadStep);
                             wizard.On('wizardStepChanged', LoadStep);
                             wizard.On('wizardClosed', function () {
+                                scope.FormStatus.Waiting=false;
                                 scope.onclose();  
                             });
                             wizard.On('wizardWaitingFinished', function () {
+                                scope.FormStatus.Waiting=false;
                                 wizard.DrainWaitingStack();
                             });
                             wizard.On('wizardWaitingReturnedError', function () {
                                 wizard.DrainWaitingStack(false);
                                 LoadStep();
                             });
-                            wizard.On('wizardWaiting', function () {
+                            wizard.On('wizardWaiting', function (data) {
+                                scope.FormStatus.Waiting=true;
+                                if (data.ShowBackGround === true && wizard.GetStepStatus(scope.step).current) {
+                                    element.css('display', 'block');
+                                    return;
+                                }
                                 element.css('display', 'none');
                             });
 
